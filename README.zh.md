@@ -7,6 +7,29 @@
 
 一个 Model Context Protocol (MCP) 服务器，使 LLM 能够通过结构化 API 调用与 [Outline](https://www.getoutline.com/) 维基进行交互。该服务器提供文档管理、搜索、集合、评论以及包含基于 RAG 问答的 AI 智能功能。
 
+## 为什么选择这个服务器？
+
+大多数 Outline MCP 服务器提供基本的 API 封装。这个服务器添加了可选的**智能功能**：
+
+| 功能 | 说明 |
+|------|------|
+| `ask_wiki` | 用自然语言提问，根据维基内容获取答案（RAG） |
+| `find_related` | 基于语义而非关键词查找相似文档 |
+| `summarize_document` | 生成长文档摘要 |
+| `suggest_tags` | 基于内容分析的标签建议 |
+
+**适用场景：**
+- 团队维基规模较大，仅搜索已不够用
+- 希望以对话方式查询文档
+- 需要在知识库中进行语义搜索
+
+**基本 MCP 足够的情况：**
+- 只需要文档的增删改查操作
+- 不想设置 OpenAI API
+- 维基规模小且组织良好
+
+智能功能需要 `ENABLE_SMART_FEATURES=true` 和 OpenAI API 密钥。没有这些设置时，服务器作为标准 Outline MCP 运行。
+
 ## 支持的客户端
 
 | 客户端 | Tools | Resources | Prompts |

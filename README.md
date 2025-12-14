@@ -7,6 +7,29 @@
 
 A Model Context Protocol (MCP) server that enables LLMs to interact with [Outline](https://www.getoutline.com/) wiki through structured API calls. This server provides document management, search, collections, comments, and AI-powered smart features including RAG-based Q&A.
 
+## Why This Server?
+
+Most Outline MCP servers provide basic API wrappers. This one adds optional **Smart Features**:
+
+| Feature | What it does |
+|---------|--------------|
+| `ask_wiki` | Ask questions in natural language, get answers based on your wiki content (RAG) |
+| `find_related` | Find semantically similar documents, not just keyword matches |
+| `summarize_document` | Generate summaries of long documents |
+| `suggest_tags` | Get tag suggestions based on content analysis |
+
+**When you might need this:**
+- Your team's wiki has grown large and search isn't enough
+- You want to query your documentation conversationally
+- You need semantic search across your knowledge base
+
+**When basic MCP is sufficient:**
+- You only need CRUD operations on documents
+- You don't want to set up OpenAI API
+- Your wiki is small and well-organized
+
+Smart features require `ENABLE_SMART_FEATURES=true` and an OpenAI API key. Without these, the server works as a standard Outline MCP.
+
 ## Supported Clients
 
 | Client | Tools | Resources | Prompts |

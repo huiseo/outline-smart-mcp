@@ -7,6 +7,29 @@
 
 LLM이 구조화된 API 호출을 통해 [Outline](https://www.getoutline.com/) 위키와 상호작용할 수 있게 해주는 Model Context Protocol (MCP) 서버입니다. 문서 관리, 검색, 컬렉션, 댓글 및 RAG 기반 Q&A를 포함한 AI 기반 스마트 기능을 제공합니다.
 
+## 왜 이 서버인가?
+
+대부분의 Outline MCP 서버는 기본적인 API 래퍼를 제공합니다. 이 서버는 선택적 **스마트 기능**을 추가합니다:
+
+| 기능 | 설명 |
+|------|------|
+| `ask_wiki` | 자연어로 질문하면 위키 내용 기반으로 답변 (RAG) |
+| `find_related` | 키워드가 아닌 의미 기반으로 유사 문서 검색 |
+| `summarize_document` | 긴 문서 요약 생성 |
+| `suggest_tags` | 내용 분석 기반 태그 제안 |
+
+**이 서버가 필요한 경우:**
+- 위키가 커져서 검색만으로 부족할 때
+- 문서를 대화형으로 질의하고 싶을 때
+- 지식 베이스 전체에 의미 기반 검색이 필요할 때
+
+**기본 MCP로 충분한 경우:**
+- 문서 CRUD 작업만 필요할 때
+- OpenAI API 설정을 원하지 않을 때
+- 위키가 작고 잘 정리되어 있을 때
+
+스마트 기능은 `ENABLE_SMART_FEATURES=true`와 OpenAI API 키가 필요합니다. 이 설정 없이는 일반 Outline MCP로 동작합니다.
+
 ## 지원 클라이언트
 
 | 클라이언트 | Tools | Resources | Prompts |
