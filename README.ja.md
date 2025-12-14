@@ -30,6 +30,19 @@ LLMが構造化されたAPI呼び出しを通じて[Outline](https://www.getoutl
 
 スマート機能には`ENABLE_SMART_FEATURES=true`とOpenAI APIキーが必要です。これらがない場合、標準のOutline MCPとして動作します。
 
+### 使用例
+
+```
+ユーザー: 「リモートワークのポリシーは？」
+→ ask_wikiがウィキを検索し、ソースリンク付きで回答
+
+ユーザー: 「オンボーディングガイドに関連するドキュメントを探して」
+→ find_relatedがキーワードではなく意味的に類似したドキュメントを返す
+
+ユーザー: 「Q4計画ドキュメントを要約して」
+→ summarize_documentが希望の言語で簡潔な要約を生成
+```
+
 ## 対応クライアント
 
 | クライアント | Tools | Resources | Prompts |

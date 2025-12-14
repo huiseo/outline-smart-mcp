@@ -30,6 +30,19 @@
 
 智能功能需要 `ENABLE_SMART_FEATURES=true` 和 OpenAI API 密钥。没有这些设置时，服务器作为标准 Outline MCP 运行。
 
+### 使用示例
+
+```
+用户："远程办公政策是什么？"
+→ ask_wiki 搜索维基并返回带有来源链接的答案
+
+用户："查找与入职指南相关的文档"
+→ find_related 返回语义相似的文档（而非仅关键词匹配）
+
+用户："总结一下 Q4 计划文档"
+→ summarize_document 生成您指定语言的简洁摘要
+```
+
 ## 支持的客户端
 
 | 客户端 | Tools | Resources | Prompts |

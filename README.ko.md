@@ -30,6 +30,19 @@ LLM이 구조화된 API 호출을 통해 [Outline](https://www.getoutline.com/) 
 
 스마트 기능은 `ENABLE_SMART_FEATURES=true`와 OpenAI API 키가 필요합니다. 이 설정 없이는 일반 Outline MCP로 동작합니다.
 
+### 사용 예시
+
+```
+사용자: "재택근무 정책이 뭐야?"
+→ ask_wiki가 위키를 검색해서 출처 링크와 함께 답변 반환
+
+사용자: "온보딩 가이드와 관련된 문서 찾아줘"
+→ find_related가 키워드가 아닌 의미 기반으로 유사 문서 반환
+
+사용자: "Q4 계획 문서 요약해줘"
+→ summarize_document가 원하는 언어로 간결한 요약 생성
+```
+
 ## 지원 클라이언트
 
 | 클라이언트 | Tools | Resources | Prompts |

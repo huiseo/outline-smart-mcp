@@ -30,6 +30,19 @@ Most Outline MCP servers provide basic API wrappers. This one adds optional **Sm
 
 Smart features require `ENABLE_SMART_FEATURES=true` and an OpenAI API key. Without these, the server works as a standard Outline MCP.
 
+### Example Usage
+
+```
+User: "What's our policy on remote work?"
+→ ask_wiki searches your wiki and returns an answer with source links
+
+User: "Find documents related to the onboarding guide"
+→ find_related returns semantically similar docs (not just keyword matches)
+
+User: "Summarize the Q4 planning document"
+→ summarize_document generates a concise summary in your preferred language
+```
+
 ## Supported Clients
 
 | Client | Tools | Resources | Prompts |
