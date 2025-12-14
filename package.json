@@ -1,0 +1,65 @@
+{
+  "name": "outline-smart-mcp",
+  "version": "1.0.0",
+  "description": "Smart MCP server for Outline Wiki with AI-powered RAG Q&A, summarization, and semantic search",
+  "main": "dist/index.js",
+  "module": "src/index.ts",
+  "type": "module",
+  "bin": {
+    "outline-smart-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "outline",
+    "wiki",
+    "knowledge-base",
+    "ai",
+    "rag",
+    "smart",
+    "vector-search",
+    "lancedb",
+    "openai",
+    "claude",
+    "typescript"
+  ],
+  "author": "hui.seo@gmail.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huiseo/outline-smart-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/huiseo/outline-smart-mcp/issues"
+  },
+  "homepage": "https://github.com/huiseo/outline-smart-mcp#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@lancedb/lancedb": "^0.22.3",
+    "@langchain/textsplitters": "^1.0.1",
+    "@modelcontextprotocol/sdk": "^1.20.1",
+    "openai": "^6.10.0",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.1",
+    "@vitest/coverage-v8": "^2.1.9",
+    "dotenv": "^17.2.3",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  }
+}
