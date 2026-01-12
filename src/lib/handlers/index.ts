@@ -12,6 +12,7 @@ import { createCollectionHandlers } from './collections.js';
 import { createCommentHandlers } from './comments.js';
 import { createBatchHandlers } from './batch.js';
 import { createSmartHandlers } from './smart.js';
+import { createHealthHandlers } from './health.js';
 
 /**
  * Create all tool handlers
@@ -24,5 +25,6 @@ export function createAllHandlers(ctx: AppContext): ToolHandlers {
     ...createCommentHandlers(ctx),
     ...createBatchHandlers(ctx),
     ...createSmartHandlers(ctx),
+    ...createHealthHandlers(ctx),
   } as ToolHandlers;
 }

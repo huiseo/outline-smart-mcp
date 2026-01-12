@@ -23,6 +23,59 @@ export interface RequestOptions {
 /** Default timeout (30 seconds) */
 const DEFAULT_TIMEOUT_MS = 30_000;
 
+/** Default rate limit delay (1 second) */
+const DEFAULT_RATE_LIMIT_DELAY_MS = 1000;
+
+/** Outline API error response format */
+interface OutlineErrorResponse {
+  ok: false;
+  error?: string;
+  message?: string;
+  status?: number;
+}
+
+/**
+ * Extract error message from Outline API response body
+ */
+function extractErrorMessage(body: unknown, statusText: string): string {
+  if (body && typeof body === 'object') {
+    const errorBody = body as OutlineErrorResponse;
+    // Outline API returns error messages in 'message' or 'error' field
+    if (errorBody.message) {
+      return errorBody.message;
+    }
+    if (errorBody.error) {
+      return errorBody.error;
+    }
+  }
+  return statusText || 'Unknown error';
+}
+
+/**
+ * Parse Retry-After header value
+ * Returns delay in milliseconds
+ */
+function parseRetryAfter(header: string | null): number | null {
+  if (!header) {
+    return null;
+  }
+
+  // Try to parse as number (seconds)
+  const seconds = parseInt(header, 10);
+  if (!isNaN(seconds) && seconds > 0) {
+    return seconds * 1000;
+  }
+
+  // Try to parse as HTTP-date
+  const date = new Date(header);
+  if (!isNaN(date.getTime())) {
+    const delay = date.getTime() - Date.now();
+    return delay > 0 ? delay : null;
+  }
+
+  return null;
+}
+
 /**
  * API Client Class
  */
@@ -66,11 +119,14 @@ export class OutlineApiClient {
       });
 
       if (!response.ok) {
-        throw new OutlineApiError(
-          response.status,
-          response.statusText,
-          await this.parseResponseBody(response)
-        );
+        const responseBody = await this.parseResponseBody(response);
+        const errorMessage = extractErrorMessage(responseBody, response.statusText);
+
+        // Extract Retry-After for rate limit errors
+        const retryAfter =
+          response.status === 429 ? parseRetryAfter(response.headers.get('Retry-After')) : null;
+
+        throw new OutlineApiError(response.status, errorMessage, responseBody, undefined, undefined, retryAfter ?? undefined);
       }
 
       const data = (await response.json()) as { data: T };
@@ -133,9 +189,15 @@ export async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions):
       const apiError = OutlineApiError.from(error);
 
       if (apiError.isRetryable() && attempt < maxRetries) {
-        const delay = apiError.isRateLimitError()
-          ? 1000
-          : retryDelayMs * Math.pow(2, attempt - 1);
+        let delay: number;
+
+        if (apiError.isRateLimitError()) {
+          // Use Retry-After header if available, otherwise default
+          delay = apiError.retryAfterMs ?? DEFAULT_RATE_LIMIT_DELAY_MS;
+        } else {
+          // Exponential backoff for other retryable errors
+          delay = retryDelayMs * Math.pow(2, attempt - 1);
+        }
 
         onRetry?.(attempt, maxRetries, delay, error);
 
@@ -158,7 +220,7 @@ export function createApiCaller(config: Config) {
     maxRetries: config.MAX_RETRIES,
     retryDelayMs: config.RETRY_DELAY_MS,
     onRetry: (attempt, max, delay) => {
-      console.error(`Retry ${attempt}/${max} after ${delay}ms...`);
+      console.error(`[api-client] Retry ${attempt}/${max} after ${delay}ms...`);
     },
   };
 

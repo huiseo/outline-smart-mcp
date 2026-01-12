@@ -5,7 +5,7 @@
  */
 
 import type { AppContext } from '../context.js';
-import type { SearchResult, OutlineCollection, OutlineDocument } from '../types/api.js';
+import type { SearchResult, OutlineCollection, OutlineDocument, OutlineDocumentTree } from '../types/api.js';
 import {
   buildUrl,
   formatSearchResults,
@@ -62,7 +62,7 @@ export function createSearchHandlers({ apiClient, apiCall, config }: AppContext)
 
     async get_collection_structure(args: GetCollectionStructureInput) {
       const { data } = await apiCall(() =>
-        apiClient.post<unknown>('/collections.documents', { id: args.collectionId })
+        apiClient.post<OutlineDocumentTree[]>('/collections.documents', { id: args.collectionId })
       );
       return data;
     },

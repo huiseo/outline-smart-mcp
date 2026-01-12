@@ -18,9 +18,13 @@ import type {
   IEmbeddingService,
   ILlmProcessor,
   IVectorStore,
+  SyncResult,
 } from './types.js';
 
-export type { WikiDocument, VectorRecord, SearchResult, SmartConfig, IBrain };
+export type { WikiDocument, VectorRecord, SearchResult, SmartConfig, IBrain, SyncResult };
+
+/** Batch size for parallel embedding generation */
+const EMBEDDING_BATCH_SIZE = 5;
 
 export interface BrainDependencies {
   embeddings: IEmbeddingService;
@@ -75,11 +79,15 @@ export class Brain implements IBrain {
   }
 
   /**
-   * Sync documents to vector store
+   * Sync documents to vector store with incremental updates
+   * Only processes documents that are new or updated since last sync
    */
-  async syncDocuments(docs: WikiDocument[]): Promise<{ chunks: number; documents: number }> {
+  async syncDocuments(docs: WikiDocument[]): Promise<SyncResult> {
     this.checkEnabled();
     await this.ensureInitialized();
+
+    // Get existing document timestamps from vector store
+    const existingDocs = await this.store.getDocumentIds();
 
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: this.chunkSize,
@@ -88,33 +96,126 @@ export class Brain implements IBrain {
 
     const records: VectorRecord[] = [];
     let processedDocs = 0;
+    let skippedDocs = 0;
+    let updatedDocs = 0;
 
     for (const doc of docs) {
-      if (!doc.text || doc.text.trim().length === 0) continue;
+      if (!doc.text || doc.text.trim().length === 0) {
+        skippedDocs++;
+        continue;
+      }
 
+      // Check if document needs sync (new or updated)
+      const existingTimestamp = existingDocs.get(doc.id);
+      const docTimestamp = doc.updatedAt || '';
+
+      if (existingTimestamp && docTimestamp && existingTimestamp >= docTimestamp) {
+        // Document hasn't changed, skip
+        skippedDocs++;
+        continue;
+      }
+
+      // If document exists but is updated, delete old chunks first
+      if (existingTimestamp) {
+        await this.store.deleteByDocumentId(doc.id);
+        updatedDocs++;
+      }
+
+      // Process document
       const chunks = await splitter.createDocuments([doc.text]);
 
-      for (let i = 0; i < chunks.length; i++) {
-        const chunk = chunks[i];
-        const vector = await this.embeddings.getEmbedding(chunk.pageContent);
+      // Process embeddings in batches for better performance
+      for (let i = 0; i < chunks.length; i += EMBEDDING_BATCH_SIZE) {
+        const batch = chunks.slice(i, i + EMBEDDING_BATCH_SIZE);
+        const texts = batch.map((c) => c.pageContent);
+        const vectors = await this.embeddings.getEmbeddings(texts);
 
-        records.push({
-          id: `${doc.id}-chunk-${i}`,
-          vector,
-          text: chunk.pageContent,
-          title: doc.title,
-          url: doc.url || `https://app.getoutline.com/doc/${doc.id}`,
-        });
+        for (let j = 0; j < batch.length; j++) {
+          records.push({
+            id: `${doc.id}-chunk-${i + j}`,
+            vector: vectors[j],
+            text: batch[j].pageContent,
+            title: doc.title,
+            url: doc.url || `https://app.getoutline.com/doc/${doc.id}`,
+            documentId: doc.id,
+            updatedAt: doc.updatedAt,
+          });
+        }
       }
 
       processedDocs++;
     }
 
     if (records.length > 0) {
-      await this.store.save(records);
+      await this.store.upsert(records);
     }
 
-    return { chunks: records.length, documents: processedDocs };
+    return {
+      chunks: records.length,
+      documents: processedDocs,
+      skipped: skippedDocs,
+      updated: updatedDocs,
+    };
+  }
+
+  /**
+   * Sync a single document to vector store (for real-time updates)
+   */
+  async syncDocument(doc: WikiDocument): Promise<{ synced: boolean; chunks: number }> {
+    this.checkEnabled();
+    await this.ensureInitialized();
+
+    if (!doc.text || doc.text.trim().length === 0) {
+      return { synced: false, chunks: 0 };
+    }
+
+    // Check if document needs sync
+    const existingDocs = await this.store.getDocumentIds();
+    const existingTimestamp = existingDocs.get(doc.id);
+    const docTimestamp = doc.updatedAt || '';
+
+    if (existingTimestamp && docTimestamp && existingTimestamp >= docTimestamp) {
+      // Document hasn't changed
+      return { synced: false, chunks: 0 };
+    }
+
+    // Delete old chunks if exists
+    if (existingTimestamp) {
+      await this.store.deleteByDocumentId(doc.id);
+    }
+
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: this.chunkSize,
+      chunkOverlap: this.chunkOverlap,
+    });
+
+    const chunks = await splitter.createDocuments([doc.text]);
+    const records: VectorRecord[] = [];
+
+    // Process embeddings in batches
+    for (let i = 0; i < chunks.length; i += EMBEDDING_BATCH_SIZE) {
+      const batch = chunks.slice(i, i + EMBEDDING_BATCH_SIZE);
+      const texts = batch.map((c) => c.pageContent);
+      const vectors = await this.embeddings.getEmbeddings(texts);
+
+      for (let j = 0; j < batch.length; j++) {
+        records.push({
+          id: `${doc.id}-chunk-${i + j}`,
+          vector: vectors[j],
+          text: batch[j].pageContent,
+          title: doc.title,
+          url: doc.url || `https://app.getoutline.com/doc/${doc.id}`,
+          documentId: doc.id,
+          updatedAt: doc.updatedAt,
+        });
+      }
+    }
+
+    if (records.length > 0) {
+      await this.store.upsert(records);
+    }
+
+    return { synced: true, chunks: records.length };
   }
 
   /**

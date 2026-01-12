@@ -64,6 +64,57 @@ export class VectorStore implements IVectorStore {
     return records.length;
   }
 
+  /**
+   * Upsert records - add new or update existing (for incremental sync)
+   */
+  async upsert(records: VectorRecord[]): Promise<number> {
+    if (!this.db) await this.init();
+
+    if (records.length === 0) return 0;
+
+    const table = await this.db!.openTable(this.tableName);
+
+    // Add records (append mode)
+    await table.add(records);
+
+    return records.length;
+  }
+
+  /**
+   * Get all document IDs with their updatedAt timestamps
+   */
+  async getDocumentIds(): Promise<Map<string, string>> {
+    if (!this.db) await this.init();
+
+    const table = await this.db!.openTable(this.tableName);
+    const results = await table.query().select(['documentId', 'updatedAt']).toArray();
+
+    const docMap = new Map<string, string>();
+    for (const r of results) {
+      const docId = r.documentId as string | undefined;
+      const updatedAt = r.updatedAt as string | undefined;
+      if (docId && docId !== VECTOR_STORE.INIT_RECORD_ID) {
+        // Keep the latest updatedAt for each document
+        const existing = docMap.get(docId);
+        if (!existing || (updatedAt && updatedAt > existing)) {
+          docMap.set(docId, updatedAt || '');
+        }
+      }
+    }
+
+    return docMap;
+  }
+
+  /**
+   * Delete all chunks for a specific document
+   */
+  async deleteByDocumentId(documentId: string): Promise<void> {
+    if (!this.db) await this.init();
+
+    const table = await this.db!.openTable(this.tableName);
+    await table.delete(`documentId = '${documentId}'`);
+  }
+
   async search(queryVector: number[], limit: number = SEARCH.DEFAULT_LIMIT): Promise<SearchResult[]> {
     if (!this.db) await this.init();
 

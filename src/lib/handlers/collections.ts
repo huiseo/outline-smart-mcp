@@ -5,7 +5,7 @@
  */
 
 import type { AppContext } from '../context.js';
-import type { OutlineCollection } from '../types/api.js';
+import type { OutlineCollection, FileOperation } from '../types/api.js';
 import { checkAccess } from '../access-control.js';
 import { MESSAGES } from '../messages.js';
 import type {
@@ -63,7 +63,7 @@ export function createCollectionHandlers({ apiClient, apiCall, config }: AppCont
 
     async export_collection(args: ExportCollectionInput) {
       const { data } = await apiCall(() =>
-        apiClient.post<unknown>('/collections.export', { id: args.collectionId, format: args.format })
+        apiClient.post<FileOperation>('/collections.export', { id: args.collectionId, format: args.format })
       );
       return {
         success: true,
@@ -76,7 +76,7 @@ export function createCollectionHandlers({ apiClient, apiCall, config }: AppCont
 
     async export_all_collections(args: ExportAllCollectionsInput) {
       const { data } = await apiCall(() =>
-        apiClient.post<unknown>('/collections.export_all', { format: args.format })
+        apiClient.post<FileOperation>('/collections.export_all', { format: args.format })
       );
       return {
         success: true,

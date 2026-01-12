@@ -83,7 +83,7 @@ describe('createDocumentSchema', () => {
 describe('deleteDocumentSchema', () => {
   test('should validate valid input', () => {
     const result = deleteDocumentSchema.safeParse({
-      documentId: 'doc-123',
+      documentId: '123e4567-e89b-12d3-a456-426614174000',
     });
     expect(result.success).toBe(true);
     if (result.success) {
@@ -93,13 +93,20 @@ describe('deleteDocumentSchema', () => {
 
   test('should accept permanent flag', () => {
     const result = deleteDocumentSchema.safeParse({
-      documentId: 'doc-123',
+      documentId: '123e4567-e89b-12d3-a456-426614174000',
       permanent: true,
     });
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.permanent).toBe(true);
     }
+  });
+
+  test('should reject invalid UUID for documentId', () => {
+    const result = deleteDocumentSchema.safeParse({
+      documentId: 'doc-123',
+    });
+    expect(result.success).toBe(false);
   });
 });
 
@@ -129,8 +136,8 @@ describe('batchCreateDocumentsSchema', () => {
 });
 
 describe('toolSchemas', () => {
-  test('should have 37 schemas defined (30 base + 7 smart)', () => {
-    expect(Object.keys(toolSchemas)).toHaveLength(37);
+  test('should have 38 schemas defined (31 base + 7 smart)', () => {
+    expect(Object.keys(toolSchemas)).toHaveLength(38);
   });
 
   test('should have schema for all tools', () => {

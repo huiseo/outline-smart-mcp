@@ -12,7 +12,8 @@ import type { IBrain } from '../brain/types.js';
 function createMockBrain(enabled: boolean = true): IBrain {
   return {
     isEnabled: vi.fn().mockReturnValue(enabled),
-    syncDocuments: vi.fn().mockResolvedValue({ documents: 2, chunks: 10 }),
+    syncDocuments: vi.fn().mockResolvedValue({ documents: 2, chunks: 10, skipped: 0, updated: 0 }),
+    syncDocument: vi.fn().mockResolvedValue({ synced: true, chunks: 2 }),
     ask: vi.fn().mockResolvedValue({
       answer: 'The answer is 42.',
       sources: [{ id: 'doc1', title: 'Guide', url: 'http://test.com/doc1', text: 'content' }],
@@ -90,7 +91,7 @@ describe('Smart Handlers', () => {
 
       expect(result.documents).toBe(2);
       expect(result.chunks).toBe(10);
-      expect(result.message).toContain('Successfully synced');
+      expect(result.message).toContain('Synced');
     });
 
     test('should handle empty document list', async () => {

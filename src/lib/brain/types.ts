@@ -14,6 +14,7 @@ export interface WikiDocument {
   text: string;
   url?: string;
   collectionId?: string;
+  updatedAt?: string;
 }
 
 export interface VectorRecord {
@@ -22,6 +23,8 @@ export interface VectorRecord {
   text: string;
   title: string;
   url: string;
+  documentId?: string;
+  updatedAt?: string;
   [key: string]: unknown;
 }
 
@@ -88,14 +91,25 @@ export interface ILlmProcessor {
 export interface IVectorStore {
   init(): Promise<void>;
   save(records: VectorRecord[]): Promise<number>;
+  upsert(records: VectorRecord[]): Promise<number>;
   search(queryVector: number[], limit?: number): Promise<SearchResult[]>;
   count(): Promise<number>;
   clear(): Promise<void>;
+  getDocumentIds(): Promise<Map<string, string>>;
+  deleteByDocumentId(documentId: string): Promise<void>;
+}
+
+export interface SyncResult {
+  chunks: number;
+  documents: number;
+  skipped?: number;
+  updated?: number;
 }
 
 export interface IBrain {
   isEnabled(): boolean;
-  syncDocuments(docs: WikiDocument[]): Promise<{ chunks: number; documents: number }>;
+  syncDocuments(docs: WikiDocument[]): Promise<SyncResult>;
+  syncDocument(doc: WikiDocument): Promise<{ synced: boolean; chunks: number }>;
   search(query: string, limit?: number): Promise<SearchResult[]>;
   ask(question: string): Promise<{ answer: string; sources: SearchResult[] }>;
   summarize(text: string, language?: string): Promise<string>;

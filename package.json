@@ -1,6 +1,6 @@
 {
   "name": "outline-smart-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Smart MCP server for Outline Wiki with AI-powered RAG Q&A, summarization, and semantic search",
   "main": "dist/index.js",
   "module": "src/index.ts",

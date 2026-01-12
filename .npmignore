@@ -1,0 +1,48 @@
+# Source files (dist만 배포)
+src/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Test
+coverage/
+*.test.ts
+vitest.config.ts
+
+# Temporary files
+*.tmp
+*.temp
+
+# Vector DB data
+.data/
+
+# Git
+.git/
+.gitignore
+
+# Config
+tsconfig.json
+
+# Scripts (개발용)
+scripts/

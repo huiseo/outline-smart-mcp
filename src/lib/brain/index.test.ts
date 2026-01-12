@@ -20,11 +20,14 @@ vi.mock('./vector-store.js', () => ({
   VectorStore: vi.fn().mockImplementation(() => ({
     init: vi.fn().mockResolvedValue(undefined),
     save: vi.fn().mockResolvedValue(5),
+    upsert: vi.fn().mockResolvedValue(5),
     search: vi.fn().mockResolvedValue([
       { id: 'doc1-chunk-0', text: 'Content about topic', title: 'Doc 1', url: 'http://test.com/doc1', score: 0.1 },
     ]),
     count: vi.fn().mockResolvedValue(10),
     clear: vi.fn().mockResolvedValue(undefined),
+    getDocumentIds: vi.fn().mockResolvedValue(new Map()),
+    deleteByDocumentId: vi.fn().mockResolvedValue(undefined),
   })),
 }));
 
@@ -136,9 +139,12 @@ describe('Brain', () => {
       vi.mocked(VectorStore).mockImplementationOnce(() => ({
         init: vi.fn().mockResolvedValue(undefined),
         save: vi.fn(),
+        upsert: vi.fn(),
         search: vi.fn().mockResolvedValue([]),
         count: vi.fn().mockResolvedValue(0),
         clear: vi.fn(),
+        getDocumentIds: vi.fn().mockResolvedValue(new Map()),
+        deleteByDocumentId: vi.fn(),
       }) as never);
 
       const newBrain = new Brain({ openaiApiKey: 'test-key', enabled: true });
@@ -217,9 +223,12 @@ describe('createBrain factory', () => {
       store: {
         init: vi.fn().mockResolvedValue(undefined),
         save: vi.fn().mockResolvedValue(5),
+        upsert: vi.fn().mockResolvedValue(5),
         search: vi.fn().mockResolvedValue([]),
         count: vi.fn().mockResolvedValue(0),
         clear: vi.fn().mockResolvedValue(undefined),
+        getDocumentIds: vi.fn().mockResolvedValue(new Map()),
+        deleteByDocumentId: vi.fn().mockResolvedValue(undefined),
       },
       processor: {
         isEnabled: () => true,
