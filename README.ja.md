@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/outline-smart-mcp.svg)](https://www.npmjs.com/package/outline-smart-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md)
+[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md) | [Deutsch](README.de.md)
 
 LLMが構造化されたAPI呼び出しを通じて[Outline](https://www.getoutline.com/)ウィキと対話できるようにするModel Context Protocol（MCP）サーバーです。ドキュメント管理、検索、コレクション、コメント、およびRAGベースのQ&Aを含むAI搭載スマート機能を提供します。
 

@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/outline-smart-mcp.svg)](https://www.npmjs.com/package/outline-smart-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md)
+[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md) | [Deutsch](README.de.md)
 
 A Model Context Protocol (MCP) server that enables LLMs to interact with [Outline](https://www.getoutline.com/) wiki through structured API calls. This server provides document management, search, collections, comments, and AI-powered smart features including RAG-based Q&A.
 
