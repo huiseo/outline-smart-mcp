@@ -383,7 +383,7 @@ npm run typecheck
 
 ## Lizenz
 
-MIT-Lizenz – Details siehe [LICENSE](LICENSE).
+MIT-Lizenz – siehe [Lizenztext](https://opensource.org/licenses/MIT).
 
 ## Links
 
