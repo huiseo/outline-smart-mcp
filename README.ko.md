@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/outline-smart-mcp.svg)](https://www.npmjs.com/package/outline-smart-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md)
+[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md) | [Deutsch](README.de.md)
 
 LLM이 구조화된 API 호출을 통해 [Outline](https://www.getoutline.com/) 위키와 상호작용할 수 있게 해주는 Model Context Protocol (MCP) 서버입니다. 문서 관리, 검색, 컬렉션, 댓글 및 RAG 기반 Q&A를 포함한 AI 기반 스마트 기능을 제공합니다.
 

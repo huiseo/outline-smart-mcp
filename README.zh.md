@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/outline-smart-mcp.svg)](https://www.npmjs.com/package/outline-smart-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md)
+[English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md) | [Deutsch](README.de.md)
 
 一个 Model Context Protocol (MCP) 服务器，使 LLM 能够通过结构化 API 调用与 [Outline](https://www.getoutline.com/) 维基进行交互。该服务器提供文档管理、搜索、集合、评论以及包含基于 RAG 问答的 AI 智能功能。
 
